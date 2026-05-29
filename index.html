@@ -305,6 +305,7 @@ canvas{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+
 </head>
 
 <body>
@@ -560,27 +561,54 @@ function buatGrafik(){
             options:{
                 responsive:true,
                 maintainAspectRatio:false,
+                layout:{
+                    padding:{
+                    top:30
+                    }
+                },
+
                 plugins:{
+
                     title:{
                         display:true,
                         text:
-                        "PROFIL ALUMNI PRODI "+prodi,
+                        "PROFIL LULUSAN PER ANGKATAN - " + prodi,
                         font:{
+                            family:"Arial",
                             size:22,
                             weight:"bold"
                         },
+                        padding:{
+                            top:10,
+                            bottom:40
+                        },
                         color:"#1565c0"
                     },
+
                     legend:{
                         display:false
+                    },
+
+                    datalabels:{
+                        anchor:"end",
+                        align:"top",
+                        color:"#000",
+                        font:{
+                            size:12,
+                            weight:"bold"
+                        },
+                        formatter:function(value){
+                            return value;
+                        }
+                    },                   
+                    scales:{
+                        y:{
+                            beginAtZero:true
+                        }
                     }
-                },
-                scales:{
-                    y:{
-                        beginAtZero:true
-                    }
-                }
-            }
+                } 
+            },
+            plugins:[ChartDataLabels]
         }
     );
 }
