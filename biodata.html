@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Biodata Alumni</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+
+#pdfHeader{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-bottom:20px;
+    padding-bottom:10px;
+    border-bottom:2px solid #1565c0;
+}
+
+#logoPdf{
+    width:70px;
+    height:70px;
+    object-fit:contain;
+}
+
+.header-text{
+    flex:1;
+}
+
+.judul-pdf{
+    font-size:20px;
+    font-weight:bold;
+    color:#1565c0;
+}
+
+.subjudul-pdf{
+    font-size:16px;
+    font-weight:bold;
+    margin-top:5px;
+}
+
+#fotoArea{
+    width:160px;
+    min-width:160px;
+    background:white;
+}
+
+.foto{
+    width:160px;
+    height:200px;
+    display:block;
+    object-fit:cover;
+    border:1px solid #999;
+    background:white;
+}
+
+body{
+    margin:0;
+    padding:20px;
+    font-family:Arial;
+    background:#f2f4f7;
+}
+
+.card{
+
+    max-width:850px;
+    margin:auto;
+    background:white;
+    border-radius:10px;
+    padding:25px;
+    box-shadow:
+    0 2px 10px rgba(0,0,0,0.15);
+}
+
+.header-box{
+    display:flex;
+    align-items:flex-start;
+    gap:20px;
+}
+
+
+.info{
+    flex:1;
+    padding-top:5px;
+}
+
+.info div{
+    margin-bottom:10px;
+    font-size:16px;
+    line-height:1.4;
+}
+
+.bold{
+    font-weight:bold;
+    font-size:18px;
+}
+
+.highlight{
+    margin-top:25px;
+    background:#d6ecff;
+    color:#1565c0;
+    padding:12px;
+    border-radius:6px;
+    font-weight:bold;
+    font-size:18px;
+}
+
+.pekerjaan{
+    margin-top:15px;
+    padding:10px;
+    line-height:1.6;
+    font-size:16px;
+}
+
+.btn-area{
+    margin-top:30px;
+    text-align:center;
+}
+
+button{
+    background:#1565c0;
+    color:white;
+    border:none;
+    padding:12px 30px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+}
+
+button:hover{
+    background:#0d47a1;
+}
+
+.pdf-header{
+    display:none;
+}
+
+
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card"
+     id="biodataCard">
+
+    <div id="pdfArea">
+
+        <!-- HEADER PDF -->
+        <div class="pdf-header"
+             id="pdfHeader">
+            <table width="100%">
+            <tr>
+            <td width="80">
+                <img src="logo.png"
+                     width="70">
+            </td>
+            <td>
+                <div style="
+                    font-size:24px;
+                    font-weight:bold;
+                    color:#1565c0;
+                ">
+                    PROFIL ALUMNI IKBA FT UNTAG SURABAYA
+                </div>
+                <div style="
+                    margin-top:5px;
+                    font-size:18px;
+                    color:#444;
+                "
+                id="judulProdi">
+                </div>
+            </td>
+            </tr>
+            </table>
+            <hr>
+        </div>
+        <!-- ISI -->
+        <div class="header-box">
+            <div id="fotoArea">
+                <img id="foto"
+                     class="foto">
+            </div>
+            <div class="info">
+                <div class="bold"
+                     id="nbi">
+                </div>
+                <div class="bold"
+                     id="nim">
+                </div>
+                <div class="bold"
+                     id="nama">
+                </div>
+                <div id="alamat"></div>
+                <div id="lahir"></div>
+                <div id="agama"></div>
+                <div id="hp"></div>
+                <div id="wisuda"></div>
+                <div id="angkatan"></div>
+            </div>
+        </div>
+
+        <!-- PROFIL KARIR -->
+
+        <div class="highlight">
+            Profil Karir Alumni
+        </div>
+        <div class="pekerjaan"
+             id="pekerjaan">
+        </div>
+    </div>
+
+    <!-- BUTTON -->
+
+    <div class="btn-area">
+        <button id="btnPdf"
+                onclick="downloadPDF()">
+            PDF
+        </button>
+    </div>
+</div>
+
+<script>
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbzE5XOapz71msh6nFB3PGZXRTxmtCkE4r7n40TRzzzuc6d-xriowjcAI2Mlj9JuDa5Q/exec";
+
+
+function formatTanggal(tgl){
+    if(!tgl)
+        return "";
+    tgl = tgl.toString();
+    let tahun, bulan, hari;
+    // FORMAT YYYY-MM-DD
+    if(tgl.includes("-")){
+        tahun = tgl.substring(0,4);
+        bulan = tgl.substring(5,7);
+        hari  = tgl.substring(8,10);
+    }
+    // FORMAT YYYYMMDD
+    else{
+        tahun = tgl.substring(0,4);
+        bulan = tgl.substring(4,6);
+        hari  = tgl.substring(6,8);
+    }
+    const namaBulan = [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember"
+    ];
+    return parseInt(hari) + " " +
+           namaBulan[
+               parseInt(bulan)-1
+           ] + " " +
+           tahun;
+}
+
+
+async function loadData(){
+    let currentData = null;
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+    const nbi =
+        params.get("nbi");
+    const response =
+        await fetch(API_URL);
+    const data =
+        await response.json();
+    const x =
+        data.find(a =>
+            a.nbi == nbi
+        );
+    currentData = x;
+    if(!x){
+        alert("Data tidak ditemukan");
+        return;
+    }
+    document.getElementById("foto").src =
+        "https://lh3.googleusercontent.com/d/" +
+        x.fileId;
+    document.getElementById("nbi")
+        .innerHTML =
+        "NBI : " + x.nbi;
+    document.getElementById("nim")
+        .innerHTML =
+        "NIM : " + x.nim;
+    document.getElementById("nama")
+        .innerHTML =
+        "Nama : " + x.nama;
+    document.getElementById("alamat")
+        .innerHTML =
+        "Alamat : " + x.alamat;
+    document.getElementById("lahir")
+        .innerHTML =
+        "Tempat/Tanggal Lahir : " + x.tmplahir +
+        ", " +
+        formatTanggal(x.tgllahir);
+    document.getElementById("agama")
+        .innerHTML =
+        "Agama : " + x.agama;
+    document.getElementById("hp")
+        .innerHTML =
+        "Telepon : " + x.hp;
+    document.getElementById("wisuda")
+        .innerHTML =
+        "Tanggal Wisuda : " + formatTanggal(x.tgllulus);
+    document.getElementById("angkatan")
+        .innerHTML =
+        "No Alumni : " + x.noalumni +
+        " Angkatan " + x.lulusan;
+    document.getElementById("pekerjaan")
+        .innerHTML =
+        x.pekerjaan;
+    document.getElementById("judulProdi")
+        .innerHTML =
+        "PRODI " + x.prodi;
+}
+
+let currentData = null;
+console.log(foto.src);
+
+async function convertImageToBase64(url){
+
+    const response =
+        await fetch(url);
+    const blob =
+        await response.blob();
+    return await new Promise(resolve=>{
+        const reader =
+            new FileReader();
+        reader.onloadend =
+            ()=> resolve(reader.result);
+        reader.readAsDataURL(blob);
+    });
+}
+
+async function downloadPDF(){
+
+    try{
+        const { jsPDF } =
+            window.jspdf;
+
+        // sembunyikan tombol
+        document.getElementById(
+            "btnPdf"
+        ).style.display =
+            "none";
+
+        // tunggu render
+        await new Promise(r =>
+            setTimeout(r, 500)
+        );
+
+        // area capture
+        const element =
+            document.getElementById(
+                "pdfArea"
+            );
+
+        // capture layar
+        const canvas =
+            await html2canvas(
+                element,
+                {
+                    scale:2,
+                    useCORS:true,
+                    allowTaint:true,
+                    logging:false,
+                    backgroundColor:"#ffffff"
+                }
+            );
+
+        // tampilkan tombol lagi
+        document.getElementById(
+            "btnPdf"
+        ).style.display =
+            "inline-block";
+
+        // convert image
+        const imgData =
+            canvas.toDataURL(
+                "image/jpeg",
+                1.0
+            );
+
+        // buat pdf
+        const pdf =
+            new jsPDF(
+                "p",
+                "mm",
+                "a4"
+            );
+
+        // ukuran
+        const margin = 10;
+        const pdfWidth = 190;
+        const pdfHeight =
+            (canvas.height * pdfWidth)
+            / canvas.width;
+
+        // gambar pdf
+        pdf.addImage(
+            imgData,
+            "JPEG",
+            margin,
+            10,
+            pdfWidth,
+            pdfHeight
+        );
+
+        // save
+        pdf.save(
+            "Profil_Alumni.pdf"
+        );
+
+    }catch(err){
+        console.log(err);
+        alert(err);
+        document.getElementById(
+            "btnPdf"
+        ).style.display =
+            "inline-block";
+    }
+}
+
+
+loadData();
+
+</script>
+
+</body>
+</html>
