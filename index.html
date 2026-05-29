@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Profil Alumni IKBA FT Untag - Ver.1.0</title>
+
+<style>
+
+.summary-box{
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+    align-items:center;
+    font-weight:bold;
+    color:#1565c0;
+}
+
+.button-group{
+    display:flex;
+    gap:10px;
+}    
+
+ .download-btn{
+    position:absolute;
+    top:10px;
+    right:60px;
+    z-index:1000;
+    background:#1565c0;
+    color:white;
+    border:none;
+    padding:8px 14px;
+    border-radius:5px;
+    cursor:pointer;
+    font-weight:bold;
+}   
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:999;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.7);
+}
+
+.modal-content{
+    position:relative;
+    width:90%;
+    height:90%;
+    margin:2% auto;
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.close{
+    position:absolute;
+    right:15px;
+    top:10px;
+    font-size:30px;
+    cursor:pointer;
+    z-index:1000;
+    color:red;
+    font-weight:bold;
+}
+
+#pdfFrame{
+    width:100%;
+    height:100%;
+    border:none;
+}    
+
+.table-container{
+    padding:15px;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#1565c0;
+    color:white;
+    padding:12px;
+    text-align:left;
+}
+
+td{
+    padding:8px 10px;
+}
+
+tbody tr{
+    transition:0.2s;
+}
+
+/* baris ganjil */
+tbody tr:nth-child(odd){
+    background:white;
+}
+
+/* baris genap */
+tbody tr:nth-child(even){
+    background:#eaf3ff;
+}
+
+/* hover */
+tbody tr:hover{
+    background:#d6e9ff;
+}
+
+th{
+    background:#1565c0;
+    color:white;
+    padding:10px;
+    text-align:left;
+    white-space:nowrap;
+}
+
+.lampiran-cell{
+    white-space:nowrap;
+}
+
+.pdf-icon{
+    cursor:pointer;
+    font-size:22px;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#f0f2f5;
+}
+
+.header{
+    background:#1565c0;
+    color:white;
+    padding:15px;
+    font-size:24px;
+    font-weight:bold;
+    text-align:center;
+}
+
+.toolbar{
+    background:white;
+    padding:10px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 2px 5px rgba(0,0,0,0.15);
+}
+
+button{
+    background:#1976d2;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+button:hover{
+    background:#0d47a1;
+}
+
+.container{
+    padding:15px;
+}
+
+iframe{
+    width:100%;
+    height:500px;
+    border:none;
+    margin-top:10px;
+    border-radius:8px;
+}
+
+.loading{
+    text-align:center;
+    padding:20px;
+    font-size:18px;
+}
+
+.center{
+    text-align:center;
+}
+
+.dashboard-content{
+    position:relative;
+    width:92vw;
+    height:86vh;
+    margin:1vh auto;
+    background:white;
+    border-radius:10px;
+    padding:15px;
+    overflow:auto;
+}
+
+#barChart{
+    height:78% !important;
+}
+
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:60% 40%;
+    gap:8px;
+    width:100%;
+    height:calc(100% - 40px);
+}
+
+.chart-box{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+.chart-box canvas{
+    max-height:100% !important;
+}
+
+.pie-container{
+    display:grid;
+    grid-template-rows:40% auto 40%;
+    gap:5px;
+    height:100%;
+    align-items:center;
+}
+
+#pieOmzet,
+#pieEbitda{
+    max-height:300px !important;
+}
+
+.legend-box{
+    text-align:center;
+    font-size:11px;
+    font-weight:bold;
+    color:#444;
+}
+
+canvas{
+    width:100% !important;
+    height:100% !important;
+}
+
+.download-dashboard-btn{
+    position:absolute;
+    top:10px;
+    right:70px;
+    z-index:1000;
+    background:#2e7d32;
+    color:white;
+    border:none;
+    padding:10px 16px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.unit-dashboard-content{
+    position:relative;
+    width:92vw;
+    height:84vh;
+    margin:2vh auto;
+    background:white;
+    border-radius:10px;
+    padding:15px;
+    overflow:hidden;
+}
+
+.unit-dashboard-grid{
+    display:grid;
+    grid-template-columns:55% 45%;
+    gap:10px;
+    width:100%;
+    height:100%;
+}
+
+.icon-slot{
+    display:inline-block;
+    width:28px;
+    text-align:center;
+}
+
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script>
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+
+<body>
+
+<div class="header">
+    PROFIL ALUMNI IKBA FT UNTAG SURABAYA
+</div>
+
+<div class="toolbar">
+    <div class="periode-box">
+        <label>PRODI :</label>
+        <select id="cmbProdi"
+            onchange="filterProdi()">
+        </select>
+    </div>
+    <button onclick="openDashboard()">
+        DASHBOARD
+    </button>
+</div>
+
+<div class="container">
+    <div id="loading" class="loading">
+        Loading data...
+    </div>
+<div class="table-container">
+
+<table>
+
+<thead>
+<tr>
+
+<th>NBI</th>
+<th>NIM</th>
+<th>Nama</th>
+<th>Alamat</th>
+<th>Agama</th>
+<th>Tempat Lahir</th>
+<th>Tanggal Lahir</th>
+<th>Telepon</th>
+<th>Tanggal Wisuda</th>
+<th>No Alumni</th>
+<th>Angkatan</th>
+<th class="center">Biodata</th>
+
+</tr>
+</thead>
+
+<tbody id="listData"></tbody>
+
+</table>
+
+</div>
+</div>
+
+<script>
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbzE5XOapz71msh6nFB3PGZXRTxmtCkE4r7n40TRzzzuc6d-xriowjcAI2Mlj9JuDa5Q/exec";
+let allData = [];
+let filteredData = [];
+
+function getAngkatan(nbi){
+
+    if(!nbi)
+        return "";
+    nbi =
+        nbi.toString().trim();
+
+    // minimal 4 digit
+    if(nbi.length < 4)
+        return "";
+
+    // ambil 2 digit mulai index ke-2
+    const yy =
+        parseInt(
+            nbi.substr(2,2)
+        );
+
+    // tentukan abad
+    let tahun = 1900 + yy;
+
+    // bila ingin support 2000+
+    if(yy < 30){
+        tahun = 2000 + yy;
+    }
+    return tahun;
+}
+
+
+function filterTahun(){
+    const tahun =
+        document.getElementById(
+            "cmbTahun"
+        ).value;
+    filteredData =
+        allData.filter(x =>
+            x.tahun == tahun
+        );
+    tampilData(filteredData);
+}
+
+function isiComboProdi(){
+    const cmb =
+        document.getElementById(
+            "cmbProdi"
+        );
+    cmb.innerHTML = "";
+    const prodi =
+        [...new Set(
+            allData.map(x => x.prodi)
+        )];
+    prodi.sort();
+    prodi.forEach(p => {
+        cmb.innerHTML += `
+            <option value="${p}">
+                ${p}
+            </option>
+        `;
+    });
+    if(prodi.length > 0){
+        cmb.value = prodi[0];
+    }
+}
+
+function filterProdi(){
+    const prodi =
+        document.getElementById(
+            "cmbProdi"
+        ).value;
+    filteredData =
+        allData.filter(x =>
+            x.prodi == prodi
+        );
+    tampilData(filteredData);
+}
+
+function openForm(url){
+    window.open(url, "_blank");
+}
+
+async function loadData(){
+    try{
+        const response =
+            await fetch(API_URL);
+        allData =
+            await response.json();
+        document.getElementById("loading")
+            .style.display = "none";
+        // isi combo tahun
+        isiComboProdi();
+        // tampilkan data tahun terakhir
+        filterProdi();
+    }
+    catch(err){
+        document.getElementById("loading")
+            .innerHTML =
+            "Gagal load data";
+        console.log(err);
+    }
+}
+
+function openDashboard(){
+    document.getElementById("dashboardModal")
+        .style.display = "block";
+    buatGrafik();
+}
+
+function closeDashboard(){
+    document.getElementById("dashboardModal")
+        .style.display = "none";
+}
+
+let barChartObj = null;
+let pieOmzetObj = null;
+let pieEbitdaObj = null;
+
+
+function buatGrafik(){
+
+    const prodi =
+        document.getElementById(
+            "cmbProdi"
+        ).value;
+
+    // filter sesuai prodi
+    const dataProdi =
+        allData.filter(x =>
+            x.prodi == prodi
+        );
+
+    // object penampung
+    const angkatanData = {};
+
+    // looping data prodi
+    dataProdi.forEach(item => {
+        const tahun =
+            getAngkatan(
+                item.nbi
+            );
+
+        // skip bila kosong
+        if(!tahun)
+            return;
+
+        // buat counter
+        if(!angkatanData[tahun]){
+            angkatanData[tahun] = 0;
+        }
+
+        // tambah jumlah
+        angkatanData[tahun]++;
+    });
+
+    // sorting tahun
+    const sorted =
+        Object.entries(
+            angkatanData
+        ).sort((a,b)=>
+            a[0] - b[0]
+        );
+
+    // label chart
+    const labels =
+        sorted.map(x=>x[0]);
+
+    // jumlah alumni
+    const totals =
+        sorted.map(x=>x[1]);
+
+    // destroy chart lama
+    if(barChartObj)
+        barChartObj.destroy();
+
+    // buat chart baru
+    barChartObj =
+        new Chart(
+        document.getElementById(
+            "barChart"
+        ),
+        {
+            type:"bar",
+            data:{
+                labels:labels,
+                datasets:[{
+                    label:
+                        "Jumlah Alumni",
+                    data:totals,
+                    backgroundColor:
+                        "#1565c0"
+                }]
+            },
+
+            options:{
+                responsive:true,
+                maintainAspectRatio:false,
+                plugins:{
+                    title:{
+                        display:true,
+                        text:
+                        "PROFIL ALUMNI PRODI "+prodi,
+                        font:{
+                            size:22,
+                            weight:"bold"
+                        },
+                        color:"#1565c0"
+                    },
+                    legend:{
+                        display:false
+                    }
+                },
+                scales:{
+                    y:{
+                        beginAtZero:true
+                    }
+                }
+            }
+        }
+    );
+}
+
+async function downloadDashboardPDF(){
+    const { jsPDF } = window.jspdf;
+    const dashboard =
+        document.querySelector(".dashboard-content");
+    const btn =
+        dashboard.querySelector(
+        ".download-dashboard-btn"
+        );
+        btn.style.display = "none";
+    const closeBtn =
+        dashboard.querySelector(
+            ".close"
+        );
+        closeBtn.style.display = "none";
+    // capture dashboard
+    dashboard.style.height = "auto";
+    const canvas =
+        await html2canvas(dashboard, {
+            scale:2,
+            useCORS:true,
+            backgroundColor:"#ffffff",
+            windowWidth: dashboard.scrollWidth,
+            windowHeight: dashboard.scrollHeight
+        });
+    const imgData =
+        canvas.toDataURL("image/png");
+    // ukuran canvas
+    const imgWidth = canvas.width;
+    const imgHeight = canvas.height;
+    // buat PDF landscape
+    const pdf =
+        new jsPDF({
+            orientation:"landscape",
+            unit:"mm",
+            format:"a4"
+        });
+    // ukuran halaman pdf
+    const pageWidth =
+        pdf.internal.pageSize.getWidth();
+    const pageHeight =
+        pdf.internal.pageSize.getHeight();
+    // margin
+    const margin = 5;
+    // area tersedia
+    const availableWidth =
+        pageWidth - (margin * 2);
+    const availableHeight =
+        pageHeight - (margin * 2);
+    // hitung rasio
+    const ratio =
+        Math.min(
+            availableWidth / imgWidth,
+            availableHeight / imgHeight
+        );
+    // ukuran final
+    const finalWidth =
+        imgWidth * ratio;
+    const finalHeight =
+        imgHeight * ratio;
+    // posisi center
+    const x =
+        (pageWidth - finalWidth) / 2;
+    const y =
+        (pageHeight - finalHeight) / 2;
+    // masukkan gambar
+    pdf.addImage(
+        imgData,
+        "PNG",
+        x,
+        y,
+        finalWidth,
+        finalHeight
+    );
+    // download
+    pdf.save("Dashboard_Tilik.pdf");
+    dashboard.style.height = "96vh";
+    btn.style.display = "block";
+    closeBtn.style.display = "block";
+}
+
+
+function formatTanggal(tgl){
+    if(!tgl) return "";
+    tgl = tgl.toString();
+    // pastikan 8 digit
+    if(tgl.length != 8) return tgl;
+    const tahun = tgl.substring(0,4);
+    const bulan = tgl.substring(4,6);
+    const hari = tgl.substring(6,8);
+    return hari + "-" + bulan + "-" + tahun;
+}
+
+
+function tampilData(data){
+    const list =
+        document.getElementById(
+            "listData"
+        );
+    list.innerHTML = "";
+    data.forEach(x => {
+        const tr =
+            document.createElement("tr");
+        tr.innerHTML = `
+        <td>${x.nbi}</td>
+        <td>${x.nim}</td>
+        <td>${x.nama}</td>
+        <td>${x.alamat}</td>
+        <td>${x.agama}</td>
+        <td>${x.tmplahir}</td>
+        <td>${formatTanggal(x.tgllahir)}</td>
+        <td>${x.hp}</td>
+        <td>${formatTanggal(x.tgllulus)}</td>
+        <td>${x.noalumni}</td>
+        <td>${x.lulusan}</td>
+        <td align="center">
+            <span class="pdf-icon"
+                title="Biodata Alumni"
+                onclick="openBiodata('${x.nbi}')">
+                👤
+            </span>
+        </td>
+        `;
+        list.appendChild(tr);
+    });
+}
+
+function openBiodata(nbi){
+    window.open(
+        "biodata.html?nbi=" + nbi,
+        "_blank"
+    );
+}
+
+function formatHasil(nilai){
+    if(nilai == null || nilai == "")
+        return "0,00";
+    return parseFloat(nilai)
+        .toLocaleString(
+            "id-ID",
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        );
+}
+
+function toNumber(nilai){
+    if(!nilai)
+        return 0;
+    // ubah ke string
+    nilai = nilai.toString();
+    // hapus titik ribuan
+    nilai = nilai.replace(/\./g, "");
+    // ganti koma jadi titik
+    nilai = nilai.replace(",", ".");
+    // convert number
+    return parseFloat(nilai) || 0;
+}
+
+function toDecimal(nilai){
+    if(!nilai)
+        return 0;
+    nilai = nilai.toString().trim();
+    // hanya ganti koma ke titik
+    nilai = nilai.replace(",", ".");
+    return parseFloat(nilai) || 0;
+}
+
+function formatAngka(nilai){
+    if(nilai == null || nilai == "")
+        return "0,00";
+    return parseFloat(nilai)
+        .toLocaleString("id-ID", {
+            minimumFractionDigits:2,
+            maximumFractionDigits:2
+        });
+}
+
+let chartEbitdaObj = null;
+let chartOmzetObj = null;
+let chartKPIObj = null;
+
+
+function toMoney(nilai){
+    if(!nilai)
+        return 0;
+    nilai = nilai.toString().trim();
+    // hapus titik ribuan
+    nilai =
+        nilai.replace(/\./g, "");
+    // ubah koma jadi titik
+    nilai =
+        nilai.replace(",", ".");
+    return parseFloat(nilai) || 0;
+}
+
+function openUnitDashboard(unit){
+    document.getElementById(
+        "unitDashboardModal"
+    ).style.display = "block";
+    // destroy chart lama
+    if(chartEbitdaObj)
+        chartEbitdaObj.destroy();
+    if(chartOmzetObj)
+        chartOmzetObj.destroy();
+    if(chartKPIObj)
+        chartKPIObj.destroy();
+    // filter unit
+    const tahun =
+        document.getElementById(
+        "cmbTahun"
+    ).value;
+    const dataUnit =
+        allData.filter(x =>
+        x.unit == unit &&
+        x.tahun <= tahun &&
+        x.progres == "P"
+    );
+    // sorting tahun
+    dataUnit.sort((a,b)=>
+        a.tahun - b.tahun
+    );
+    // label tahun
+    const labels =
+        dataUnit.map(x => x.tahun);
+    // data
+    const omzet =
+        dataUnit.map(x =>
+            toNumber(x.omzet)
+        );
+    const ebitda =
+        dataUnit.map(x =>
+            toNumber(x.ebitda)
+        );
+    const hasil =
+        dataUnit.map(x =>
+            toDecimal(x.hasil)
+        );
+
+    // =========================
+    // EBITDA
+    // =========================
+
+    chartEbitdaObj =
+        new Chart(
+        document.getElementById(
+            "chartEbitda"
+        ),
+        {
+            type:"bar",
+            data:{
+                labels:labels,
+                datasets:[{
+                    label:"EBITDA",
+                    data:ebitda,
+                    backgroundColor:"#43a047"
+                }]
+            },
+            options:{
+                responsive:true,
+                maintainAspectRatio:false,
+                plugins:{
+                    legend:{
+                        display:false
+                    },
+                    title:{
+                        display:true,
+                        text:
+                        "PENCAPAIAN EBITDA/LABA BERSIH",
+                        font:{
+                            size:18,
+                            weight:"bold"
+                        }
+                    },
+                    datalabels:{
+                        anchor:"end",
+                        align:"top",
+                        color:"#000",
+                        font:{
+                            weight:"bold",
+                            size:11
+                        },
+                        formatter:function(value){
+                            return value.toLocaleString(
+                            "id-ID",
+                            {
+                                minimumFractionDigits:0,
+                                maximumFractionDigits:0
+                            }
+                            );
+                        }                    
+                    }
+                }
+            },
+            plugins:[ChartDataLabels]
+        });
+
+    // =========================
+    // OMZET
+    // =========================
+
+    chartOmzetObj =
+        new Chart(
+        document.getElementById(
+            "chartOmzet"
+        ),
+
+        {
+            type:"bar",
+            data:{
+                labels:labels,
+                datasets:[{
+                    label:"Omzet",
+                    data:omzet,
+                    backgroundColor:"#1e88e5"
+                }]
+            },
+            options:{
+                responsive:true,
+                maintainAspectRatio:false,
+                plugins:{
+                    legend:{
+                        display:false
+                    },
+                    title:{
+                        display:true,
+                        text:
+                        "PEROLEHAN OMZET",
+                        font:{
+                            size:18,
+                            weight:"bold"
+                        }
+                    },
+                    datalabels:{
+                        anchor:"end",
+                        align:"top",
+                        color:"#000",
+                        font:{
+                            weight:"bold",
+                            size:11
+                        },
+                        formatter:function(value){
+                            return value.toLocaleString(
+                            "id-ID",
+                            {
+                                minimumFractionDigits:0,
+                                maximumFractionDigits:0
+                            }
+                            );
+                        }                    
+                    }
+                }
+            },
+            plugins:[ChartDataLabels]
+        });
+
+    // =========================
+    // KPI
+    // =========================
+
+    chartKPIObj =
+        new Chart(
+
+        document.getElementById(
+            "chartKPI"
+        ),
+
+        {
+            type:"line",
+            data:{
+                labels:labels,
+                datasets:[{
+                    label:"KPI",
+                    data:hasil,
+                    backgroundColor:"#fb8c00",
+                    borderColor:"#fb8c00",
+                    backgroundColor:"#fb8c00",
+                    pointRadius:5,
+                    pointHoverRadius:7,
+                    tension:0.3,
+                    fill:false
+                }]
+            },
+            options:{
+                responsive:true,
+                maintainAspectRatio:false,
+                plugins:{
+                    legend:{
+                        display:false
+                    },
+                    title:{
+                        display:true,
+                        text:
+                        "KINERJA KPI",
+                        font:{
+                            size:18,
+                            weight:"bold"
+                        }
+                    },
+                    datalabels:{
+                        anchor:"end",
+                        align:"top",
+                        color:"#000",
+                        font:{
+                            weight:"bold",
+                            size:11
+                        },
+                        formatter:function(value){
+                            return value
+                            .toFixed(2)
+                            .replace(".", ",");
+                        }                    
+                    }
+                }
+            },
+            plugins:[ChartDataLabels]
+        });
+}
+
+function closeUnitDashboard(){
+    document.getElementById(
+        "unitDashboardModal"
+    ).style.display = "none";
+}
+
+async function downloadUnitDashboardPDF(){
+    const { jsPDF } = window.jspdf;
+    const dashboard =
+        document.querySelector(
+            ".unit-dashboard-content"
+        );
+    const btn =
+        dashboard.querySelector(
+        ".download-dashboard-btn"
+        );
+        btn.style.display = "none";
+    const closeBtn =
+        dashboard.querySelector(
+            ".close"
+        );
+        closeBtn.style.display = "none";
+    dashboard.style.height = "auto";
+    const canvas =
+        await html2canvas(dashboard, {
+            scale:2,
+            useCORS:true,
+            backgroundColor:"#ffffff",
+            windowWidth: dashboard.scrollWidth,
+            windowHeight: dashboard.scrollHeight
+        });
+    const imgData =
+        canvas.toDataURL("image/png");
+    const pdf =
+        new jsPDF({
+            orientation:"landscape",
+            unit:"mm",
+            format:"a4"
+        });
+    const pageWidth =
+        pdf.internal.pageSize.getWidth();
+    const pageHeight =
+        pdf.internal.pageSize.getHeight();
+    const margin = 5;
+    const availableWidth =
+        pageWidth - (margin * 2);
+    const availableHeight =
+        pageHeight - (margin * 2);
+    const ratio =
+        Math.min(
+            availableWidth / canvas.width,
+            availableHeight / canvas.height
+        );
+    const finalWidth =
+        canvas.width * ratio;
+    const finalHeight =
+        canvas.height * ratio;
+    const x =
+        (pageWidth - finalWidth) / 2;
+    const y =
+        (pageHeight - finalHeight) / 2;
+    pdf.addImage(
+        imgData,
+        "PNG",
+        x,
+        y,
+        finalWidth,
+        finalHeight
+    );
+    pdf.save("Dashboard_Unit.pdf");
+    dashboard.style.height = "96vh";
+    btn.style.display = "block";
+    closeBtn.style.display = "block";
+}
+
+loadData();
+
+</script>
+
+<div id="unitDashboardModal" class="modal">
+    <<div class="unit-dashboard-content">
+        <span class="close"
+            onclick="closeUnitDashboard()">
+            &times;
+        </span>
+        <button class="download-dashboard-btn"
+            onclick="downloadUnitDashboardPDF()">
+            DOWNLOAD PDF
+        </button>
+        <div class="unit-dashboard-grid">
+            <!-- EBITDA -->
+            <div class="chart-box">
+                <canvas id="chartEbitda"></canvas>
+            </div>
+            <!-- kanan -->
+            <div style="
+                display:grid;
+                grid-template-rows:48% 48%;
+                gap:10px;
+            ">
+                <!-- omzet -->
+                <div class="chart-box">
+                    <canvas id="chartOmzet"></canvas>
+                </div>
+                <!-- KPI -->
+                <div class="chart-box">
+                    <canvas id="chartKPI"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="pdfModal" class="modal">
+    <div class="modal-content">
+        <span class="close"
+              onclick="closePDF()">
+              &times;
+        </span>
+        <button id="downloadBtn"
+                class="download-btn">
+            Download PDF
+        </button>
+        <iframe id="pdfFrame"></iframe>
+    </div>
+</div>
+
+<div id="dashboardModal" class="modal">
+    <div class="dashboard-content">
+        <span class="close"
+              onclick="closeDashboard()">
+              &times;
+        </span>
+        <button class="download-dashboard-btn"
+                onclick="downloadDashboardPDF()">
+                DOWNLOAD PDF
+        </button>
+        <div class="dashboard-grid">
+            <!-- kiri -->
+            <div class="chart-box">
+                <canvas id="barChart"></canvas>
+            </div>
+            <!-- kanan -->
+            <div class="pie-container">
+                <!-- pie atas -->
+                <div class="chart-box">
+                    <canvas id="pieOmzet"></canvas>
+                </div>
+                <!-- legenda -->
+                <div class="legend-box"
+                     id="legendContainer">
+                </div>
+                <!-- pie bawah -->
+                <div class="chart-box">
+                    <canvas id="pieEbitda"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
