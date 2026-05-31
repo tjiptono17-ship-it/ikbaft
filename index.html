@@ -400,34 +400,27 @@ canvas{
         Loading Data Alumni...
     </div>
 </div>
+
 <div class="table-container">
-
-<table>
-
-<thead>
-<tr>
-
-<th>NBI</th>
-<th>NIM</th>
-<th>Nama</th>
-<th>Alamat</th>
-<th>Agama</th>
-<th>Tempat Lahir</th>
-<th>Tanggal Lahir</th>
-<th>Telepon</th>
-<th>Tanggal Wisuda</th>
-<th>No Alumni</th>
-<th>Angkatan</th>
-<th class="center">Biodata</th>
-
-</tr>
-</thead>
-
-<tbody id="listData"></tbody>
-
-</table>
-
-</div>
+    <table>
+        <thead>
+        <tr>
+            <th>NBI</th>
+            <th>NIM</th>
+            <th>Nama</th>
+            <th>Alamat</th>
+            <th>Agama</th>
+            <th>Tempat Lahir</th>
+            <th>Tanggal Lahir</th>
+            <th>Telepon</th>
+            <th>Tanggal Wisuda</th>
+            <th>No Alumni</th>
+            <th>Angkatan</th>
+            <th class="center">Biodata</th>
+        </tr>
+        </thead>
+        <tbody id="listData"></tbody>
+    </table>    
 </div>
 
 <script>
@@ -441,6 +434,9 @@ let prodiData = [];
 let barChartObj = null;
 let pieOmzetObj = null;
 let pieEbitdaObj = null;
+let chartEbitdaObj = null;
+let chartOmzetObj = null;
+let chartKPIObj = null;
 
 
 function getAngkatan(nbi){
@@ -914,10 +910,6 @@ function formatAngka(nilai){
             maximumFractionDigits:2
         });
 }
-
-let chartEbitdaObj = null;
-let chartOmzetObj = null;
-let chartKPIObj = null;
 
 
 function toMoney(nilai){
