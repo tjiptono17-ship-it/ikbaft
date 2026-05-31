@@ -141,13 +141,62 @@ button:hover{
     display:none;
 }
 
+.loading-overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(255,255,255,0.9);
+    z-index:9999;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
 
+.spinner{
+    width:60px;
+    height:60px;
+    border:6px solid #ddd;
+    border-top:6px solid #1565c0;
+    border-radius:50%;
+
+    animation:spin 1s linear infinite;
+}
+
+.loading-text{
+    margin-top:15px;
+    font-size:16px;
+    font-weight:bold;
+    color:#1565c0;
+}
+
+@keyframes spin{
+    0%{
+        transform:rotate(0deg);
+    }
+    100%{
+        transform:rotate(360deg);
+    }
+}
+
+.loading-overlay{
+    display:flex;
+}
 
 </style>
 
 </head>
 
 <body>
+
+    <div id="loadingSpinner" class="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text">
+        Loading Biodata Alumni...
+    </div>
+</div>
 
 <div class="card"
      id="biodataCard">
@@ -275,64 +324,110 @@ function formatTanggal(tgl){
 
 async function loadData(){
     let currentData = null;
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-    const nbi =
-        params.get("nbi");
-    const response =
-        await fetch(API_URL);
-    const data =
-        await response.json();
-    const x =
-        data.find(a =>
-            a.nbi == nbi
-        );
-    currentData = x;
-    if(!x){
-        alert("Data tidak ditemukan");
-        return;
+    // TAMPILKAN SPINNER
+    document.getElementById(
+        "loadingSpinner"
+    ).style.display = "flex";
+    try{
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+        const nbi =
+            params.get("nbi");
+        const response =
+            await fetch(API_URL);
+        const data =
+            await response.json();
+        const x =
+            data.find(a =>
+                a.nbi == nbi
+            );
+        currentData = x;
+        if(!x){
+            document.getElementById(
+                "loadingSpinner"
+            ).style.display = "none";
+            alert("Data tidak ditemukan");
+            return;
+        }
+        const foto =
+            document.getElementById(
+                "foto"
+            );
+
+        // FOTO SELESAI DIMUAT
+        foto.onload = function(){
+            document.getElementById(
+                "loadingSpinner"
+            ).style.display = "none";
+
+        };
+
+        // JIKA FOTO GAGAL
+        foto.onerror = function(){
+            document.getElementById(
+                "loadingSpinner"
+            ).style.display = "none";
+        };
+        foto.src =
+            "https://lh3.googleusercontent.com/d/" +
+            x.fileId;
+        document.getElementById("nbi")
+            .innerHTML =
+            "NBI : " + x.nbi;
+        document.getElementById("nim")
+            .innerHTML =
+            "NIM : " + x.nim;
+        document.getElementById("nama")
+            .innerHTML =
+            "Nama : " + x.nama;
+        document.getElementById("alamat")
+            .innerHTML =
+            "Alamat : " + x.alamat;
+        document.getElementById("lahir")
+            .innerHTML =
+            "Tempat/Tanggal Lahir : " +
+            x.tmplahir +
+            ", " +
+            formatTanggal(
+                x.tgllahir
+            );
+        document.getElementById("agama")
+            .innerHTML =
+            "Agama : " + x.agama;
+        document.getElementById("hp")
+            .innerHTML =
+            "Telepon : " + x.hp;
+        document.getElementById("wisuda")
+            .innerHTML =
+            "Tanggal Wisuda : " +
+            formatTanggal(
+                x.tgllulus
+            );
+        document.getElementById("angkatan")
+            .innerHTML =
+            "No Alumni : " +
+            x.noalumni +
+            " Angkatan " +
+            x.lulusan;
+        document.getElementById("pekerjaan")
+            .innerHTML =
+            x.pekerjaan;
+        document.getElementById("judulProdi")
+            .innerHTML =
+            "PRODI " +
+            x.prodi;
     }
-    document.getElementById("foto").src =
-        "https://lh3.googleusercontent.com/d/" +
-        x.fileId;
-    document.getElementById("nbi")
-        .innerHTML =
-        "NBI : " + x.nbi;
-    document.getElementById("nim")
-        .innerHTML =
-        "NIM : " + x.nim;
-    document.getElementById("nama")
-        .innerHTML =
-        "Nama : " + x.nama;
-    document.getElementById("alamat")
-        .innerHTML =
-        "Alamat : " + x.alamat;
-    document.getElementById("lahir")
-        .innerHTML =
-        "Tempat/Tanggal Lahir : " + x.tmplahir +
-        ", " +
-        formatTanggal(x.tgllahir);
-    document.getElementById("agama")
-        .innerHTML =
-        "Agama : " + x.agama;
-    document.getElementById("hp")
-        .innerHTML =
-        "Telepon : " + x.hp;
-    document.getElementById("wisuda")
-        .innerHTML =
-        "Tanggal Wisuda : " + formatTanggal(x.tgllulus);
-    document.getElementById("angkatan")
-        .innerHTML =
-        "No Alumni : " + x.noalumni +
-        " Angkatan " + x.lulusan;
-    document.getElementById("pekerjaan")
-        .innerHTML =
-        x.pekerjaan;
-    document.getElementById("judulProdi")
-        .innerHTML =
-        "PRODI " + x.prodi;
+    catch(err){
+        document.getElementById(
+            "loadingSpinner"
+        ).style.display = "none";
+        alert(
+            "Gagal mengambil data"
+        );
+        console.log(err);
+    }
 }
 
 let currentData = null;
