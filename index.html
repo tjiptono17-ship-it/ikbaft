@@ -296,6 +296,67 @@ canvas{
     text-align:center;
 }
 
+#txtCari{
+    padding:8px;
+    border:1px solid #ccc;
+    border-radius:5px;
+    width:250px;
+}
+
+.search-box{
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+.search-btn{
+    padding:8px 12px;
+    cursor:pointer;
+}
+
+
+.loading{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:white;
+    z-index:9999;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+.spinner{
+    width:60px;
+    height:60px;
+    margin:auto;
+    border:6px solid #ddd;
+    border-top:6px solid #1565c0;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+
+.loading-text{
+    margin-top:15px;
+    font-size:18px;
+    font-weight:bold;
+    color:#1565c0;
+}
+
+
+@keyframes spin{
+    0%{
+        transform:rotate(0deg);
+    }
+    100%{
+        transform:rotate(360deg);
+    }
+}
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -321,15 +382,26 @@ canvas{
             onchange="filterProdi()">
         </select>
     </div>
-    <button onclick="openDashboard()">
+        <div class="search-box">
+        <input type="text"
+            id="txtCari"
+               placeholder="Cari Alumni">
+        <button onclick="cariSemua()"
+                class="search-btn">
+            🔍
+        </button>
+    </div>
+       <button onclick="openDashboard()">
         DASHBOARD
     </button>
 </div>
 
-<div class="container">
-    <div id="loading" class="loading">
-        Loading data...
+<div id="loading" class="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">
+        Loading Data Alumni...
     </div>
+</div>
 <div class="table-container">
 
 <table>
@@ -364,8 +436,14 @@ canvas{
 
 const API_URL =
 "https://script.google.com/macros/s/AKfycbzE5XOapz71msh6nFB3PGZXRTxmtCkE4r7n40TRzzzuc6d-xriowjcAI2Mlj9JuDa5Q/exec";
+
 let allData = [];
 let filteredData = [];
+let prodiData = [];
+let barChartObj = null;
+let pieOmzetObj = null;
+let pieEbitdaObj = null;
+
 
 function getAngkatan(nbi){
 
@@ -435,11 +513,72 @@ function filterProdi(){
         document.getElementById(
             "cmbProdi"
         ).value;
-    filteredData =
-        allData.filter(x =>
-            x.prodi == prodi
+    // DATA PRODI UNTUK DASHBOARD
+    prodiData =
+        allData.filter(
+            item =>
+                item.prodi == prodi
         );
-    tampilData(filteredData);
+    const cari =
+        document.getElementById(
+            "txtCari"
+        ).value
+        .toUpperCase()
+        .trim();
+    // DATA TAMPIL DI GRID
+    filteredData =
+        prodiData.filter(
+            item =>
+                cari == "" ||
+                item.nama
+                    .toUpperCase()
+                    .includes(cari)
+        );
+    tampilData(
+        filteredData
+    );
+}
+
+function cariSemualama(){
+    const cari =
+        document.getElementById(
+            "txtCari"
+        ).value
+        .trim()
+        .toUpperCase();
+    filteredData =
+        prodiData.filter(item =>
+            item.nama
+                .toUpperCase()
+                .includes(cari)
+        );
+    tampilData(
+        filteredData
+    );
+}
+
+
+function cariSemua(){
+    const cari =
+        document.getElementById(
+            "txtCari"
+        ).value
+        .trim()
+        .toUpperCase();
+    if(cari == ""){
+        filterProdi();
+        return;
+    }
+    const hasil =
+        allData.filter(item =>
+            item.nama &&
+            item.nama
+                .toUpperCase()
+                .includes(cari)
+        );
+    tampilData(
+        hasil
+    );
 }
 
 function openForm(url){
@@ -478,10 +617,6 @@ function closeDashboard(){
         .style.display = "none";
 }
 
-let barChartObj = null;
-let pieOmzetObj = null;
-let pieEbitdaObj = null;
-
 
 function buatGrafik(){
 
@@ -490,11 +625,7 @@ function buatGrafik(){
             "cmbProdi"
         ).value;
 
-    // filter sesuai prodi
-    const dataProdi =
-        allData.filter(x =>
-            x.prodi == prodi
-        );
+    const dataProdi = prodiData;
 
     // object penampung
     const angkatanData = {};
@@ -557,7 +688,6 @@ function buatGrafik(){
                         "#1565c0"
                 }]
             },
-
             options:{
                 responsive:true,
                 maintainAspectRatio:false,
@@ -566,9 +696,7 @@ function buatGrafik(){
                     top:30
                     }
                 },
-
                 plugins:{
-
                     title:{
                         display:true,
                         text:
@@ -584,11 +712,9 @@ function buatGrafik(){
                         },
                         color:"#1565c0"
                     },
-
                     legend:{
                         display:false
                     },
-
                     datalabels:{
                         anchor:"end",
                         align:"top",
@@ -1106,6 +1232,17 @@ async function downloadUnitDashboardPDF(){
     btn.style.display = "block";
     closeBtn.style.display = "block";
 }
+
+document
+.getElementById("txtCari")
+.addEventListener(
+    "keypress",
+    function(e){
+        if(e.key === "Enter"){
+            cariSemua();
+        }
+    }
+);
 
 loadData();
 
